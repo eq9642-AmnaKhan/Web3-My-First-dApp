@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>My First dApp - ammyyyGalaxy</title>
+    <script
+    src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+    type="application/javascript"
+    ></script>
+
+    <script>
+        const MoodContractAddres = "0x258638B01046a942884696ba4ebBBE229966Cfc9";
+        const MoodContractaBI = [
+                        {
+                            "inputs": [],
+                            "name": "getMood",
+                            "outputs": [
+                                {
+                                    "internalType": "string",
+                                    "name": "",
+                                    "type": "string"
+                                }
+                            ],
+                            "stateMutability": "view",
+                            "type": "function"
+                        },
+                        {
+                            "inputs": [
+                                {
+                                    "internalType": "string",
+                                    "name": "_mood",
+                                    "type": "string"
+                                }
+                            ],
+                            "name": "setMood",
+                            "outputs": [],
+                            "stateMutability": "nonpayable",
+                            "type": "function"
+                        }
+                    ]
+            let MoodContract;
+            let signer;
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum, "goerli");
+
+            provider.send("eth_requestAccounts", []).then(() =>{
+                provider.listAccounts().then((accounts) => {
+                    signer = provider.getSigner(accounts[0]);
+
+                    MoodContract = new ethers.Contract(
+                        MoodContractAddres,
+                        MoodContractaBI,
+                        signer
+                    );
+                });
+            })
+
+            
+
+    </script>
+
+    <script defer>
+        
+            //async functions to call smart contract functions
+
+            async function getMood(){
+                const getMoodpromise = MoodContract.getMood();
+                const Mood = await getMoodpromise;
+                console.log(Mood);
+
+                var moodspace =  document.getElementById("moodid");
+                 moodspace.innerText = Mood;
+
+               
+            }
+
+
+            async function setMood(){
+                const mood = document.getElementById("mood").value;
+                const setMoodpromise = MoodContract.setMood(mood);
+                await setMoodpromise;      
+                
+                var moodspace =  document.getElementById("moodid");
+                 moodspace.innerText = mood;
+                 document.getElementById("mood").value = '';
+
+            }
+    </script>
+</head>
+<body>
+    <div>
+        <h1>This is my first dApp</h1>
+        <div><b>Current Mood is:</b><span id="moodid"></span></div>
+        <p>Here we can Set or Get the mood</p>
+        <p> start typing in the field below to set the mood.</p>
+
+    </div>
+    <div id="iform">
+    
+        <label for="mood">Enter here: </label> <br>
+        <input type="text" id="mood">
+        <button onclick="setMood()">Set Mood</button>
+        <button onclick="getMood()">Get Mood</button>
+
+        <!-- here we cn have an html element to display the mood by setting its innerhtml
+        or the kood can be set using background colors .ffor example blue on sad -->
+
+    </div>
+    
+</body>
+</html>
